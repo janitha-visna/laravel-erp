@@ -15,11 +15,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Order matters — respect foreign key dependencies
+        $this->call([
+            DistrictSeeder::class,       // no FK
+            ItemCategorySeeder::class,   // no FK
+            ItemSubCategorySeeder::class, // FK → item_categories
+            CustomerSeeder::class,       // FK → districts
+            ItemSeeder::class,           // FK → item_categories, item_sub_categories
+            InvoiceSeeder::class,        // FK → customers
+            InvoiceItemSeeder::class,    // FK → invoices, items
         ]);
     }
 }
