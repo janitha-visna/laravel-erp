@@ -47,5 +47,8 @@
             }, 4000);
         });
     </script>
+
+    {{-- Page-specific scripts pushed by child views --}}
+    @stack('scripts')
 </body>
 </html>

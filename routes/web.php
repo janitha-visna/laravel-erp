@@ -8,3 +8,6 @@ Route::get('/', function () {
 })->name('dashboard');
 
 Route::resource('items', ItemController::class);
+
+// AJAX: return sub-categories for a given category_id
+Route::get('items-subcategories', [ItemController::class, 'subcategories'])->name('items.subcategories');
