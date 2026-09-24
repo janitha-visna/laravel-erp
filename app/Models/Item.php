@@ -18,13 +18,28 @@ class Item extends Model
         'unit_price',
     ];
 
-    public function category()
+    protected $casts = [
+        'unit_price' => 'decimal:2',
+        'quantity'   => 'integer',
+    ];
+
+    // ── Relationships ────────────────────────────────────────────
+
+    /** Belongs to a category */
+    public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(ItemCategory::class, 'category_id');
     }
 
-    public function subCategory()
+    /** Belongs to a sub-category */
+    public function subCategory(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(ItemSubCategory::class, 'sub_category_id');
+    }
+
+    /** Has many invoice line items */
+    public function invoiceItems(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(InvoiceItem::class);
     }
 }
