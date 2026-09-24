@@ -3,91 +3,86 @@
 @section('title', 'Items')
 
 @section('content')
-    <div class="erp-breadcrumb">
-        <a href="{{ route('dashboard') }}">Dashboard</a>
-        <span class="sep">/</span>
-        <span class="current">Items</span>
-    </div>
+
+    {{-- Breadcrumb --}}
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item active">Items</li>
+        </ol>
+    </nav>
 
     {{-- Flash Messages --}}
     @if (session('created'))
-        <div class="erp-alert success" data-auto-dismiss>
-            <i class="bi bi-check-circle-fill"></i> {{ session('created') }}
+        <div class="alert alert-success alert-dismissible fade show" role="alert" data-auto-dismiss>
+            <i class="bi bi-check-circle-fill me-2"></i> {{ session('created') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
     @if (session('updated'))
-        <div class="erp-alert success" data-auto-dismiss>
-            <i class="bi bi-check-circle-fill"></i> {{ session('updated') }}
+        <div class="alert alert-success alert-dismissible fade show" role="alert" data-auto-dismiss>
+            <i class="bi bi-check-circle-fill me-2"></i> {{ session('updated') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
     @if (session('deleted'))
-        <div class="erp-alert error" data-auto-dismiss>
-            <i class="bi bi-trash-fill"></i> {{ session('deleted') }}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" data-auto-dismiss>
+            <i class="bi bi-trash-fill me-2"></i> {{ session('deleted') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
-    <div class="erp-card">
-        <div class="section-header">
-            <div class="section-title">Item <span>List</span></div>
-            <a href="{{ route('items.create') }}" class="btn-erp-primary">
-                <i class="bi bi-plus-lg"></i> Add Item
-            </a>
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 fw-bold">Item <span class="text-info">List</span></h5>
         </div>
-
-        <div class="table-responsive">
-            <table class="erp-table erp-datatable">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Item Code</th>
-                        <th>Item Name</th>
-                        <th>Category</th>
-                        <th>Sub Category</th>
-                        <th>Qty</th>
-                        <th>Unit Price (Rs)</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($items as $i => $item)
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td><span class="badge-erp amber">{{ $item->item_code }}</span></td>
-                            <td>{{ $item->item_name }}</td>
-                            <td>{{ $item->category->name ?? 'N/A' }}</td>
-                            <td>{{ $item->subCategory->name ?? 'N/A' }}</td>
-                            <td>{{ number_format($item->quantity) }}</td>
-                            <td><strong>{{ number_format($item->unit_price, 2) }}</strong></td>
-                            <td>
-                                <div class="d-flex gap-2">
-                                    <a href="{{ route('items.edit', $item) }}" class="btn-erp-edit">
-                                        <i class="bi bi-pencil-fill"></i> Edit
-                                    </a>
+                            <th>#</th>
+                            <th>Item Code</th>
+                            <th>Item Name</th>
+                            <th>Category</th>
+                            <th>Sub Category</th>
+                            <th>Qty</th>
+                            <th>Unit Price (Rs)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($items as $item)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>
+                                    <span class="badge bg-warning text-dark">{{ $item->item_code }}</span>
+                                </td>
+                                <td>{{ $item->item_name }}</td>
+                                <td>{{ $item->category->name ?? 'N/A' }}</td>
+                                <td>{{ $item->subCategory->name ?? 'N/A' }}</td>
+                                <td>{{ number_format($item->quantity) }}</td>
+                                <td><strong>{{ number_format($item->unit_price, 2) }}</strong></td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">
+                                    No items found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
 
-                                    {{-- In Laravel, DELETE actions must use POST/DELETE with CSRF protection --}}
-                                    <form action="{{ route('items.destroy', $item) }}" method="POST"
-                                        onsubmit="return confirm('Delete this item? This cannot be undone.');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn-erp-danger">
-                                            <i class="bi bi-trash-fill"></i> Delete
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="8" class="text-center" style="color:var(--slate-600);padding:30px">
-                                No items found. <a href="{{ route('items.create') }}" style="color:var(--teal)">Add
-                                    one</a>.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+            {{-- Pagination --}}
+            @if ($items->hasPages())
+                <div class="d-flex justify-content-end p-3">
+                    {{ $items->links('pagination::bootstrap-5') }}
+                </div>
+            @endif
         </div>
     </div>
+
 @endsection
